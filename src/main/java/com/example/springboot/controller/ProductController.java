@@ -1,9 +1,13 @@
 package com.example.springboot.controller;
 
+import com.example.springboot.Dto.FakeStoreDto;
 import com.example.springboot.Models.Products;
 import com.example.springboot.Service.FakeStoreProductService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,31 +22,29 @@ public class ProductController {
     public ProductController(FakeStoreProductService fakeStoreProductService){
         this.fakeStoreProductService=fakeStoreProductService;
     }
-    @GetMapping(value = "/products")
-    public List<Products> getAllProducts(){
-        return new ArrayList<>();
-    }
     @GetMapping(value = "/get/{id}")
     public Products getProduct(@PathVariable Long id){
         return fakeStoreProductService.getProduct(id);
     }
+    @GetMapping(value = "/products")
+    public List<Products> getAllProducts(){
+        return fakeStoreProductService.getAllProducts();
+    }
     @PostMapping(value = "/add")
-    public Products addNewProduct(@RequestBody Products product){
-        Products product2=new Products();
-        product2.setTitle("a new product");
-        return product2;
+    public ResponseEntity<Products> addNewProduct(@RequestBody FakeStoreDto fakeStoreDto){
+        return new ResponseEntity<>(fakeStoreProductService.addNewProduct(fakeStoreDto), HttpStatusCode.valueOf(HttpServletResponse.SC_OK));
     }
     @PatchMapping(value = "/{id}")
     public Products updateProduct(@PathVariable Long id,@RequestBody Products product){
-        return new Products();
+        return fakeStoreProductService.replaceProduct(id,product);
 
     }
     @PutMapping(value = "/{id}")
     public Products replaceProduct(@PathVariable Long id,@RequestBody Products products){
-        return new Products();
+        return fakeStoreProductService.replaceProduct(id,products);
     }
-    @DeleteMapping (value = "/{id}")
+    @DeleteMapping (value = "/delete/{id}")
     public Products deleteProduct(@PathVariable Long id){
-        return new Products();
+        return fakeStoreProductService.deleteProduct(id);
     }
 }
