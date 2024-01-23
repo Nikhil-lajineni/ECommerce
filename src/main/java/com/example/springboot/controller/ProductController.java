@@ -11,8 +11,6 @@ import java.util.List;
 public class ProductController {
     @GetMapping(value = "/products")
     public List<Products> getAllProducts(){
-//        RestTemplate restTemplate=new RestTemplate().getForObject("https://fakestoreapi.com/products",
-//                )
         return new ArrayList<>();
     }
     @GetMapping(value = "/get/{id}")
