@@ -1,6 +1,9 @@
 package com.example.springboot.controller;
 
 import com.example.springboot.Models.Products;
+import com.example.springboot.Service.FakeStoreProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -9,13 +12,19 @@ import java.util.List;
 
 @RestController
 public class ProductController {
+
+    private FakeStoreProductService fakeStoreProductService;
+    @Autowired
+    public ProductController(FakeStoreProductService fakeStoreProductService){
+        this.fakeStoreProductService=fakeStoreProductService;
+    }
     @GetMapping(value = "/products")
     public List<Products> getAllProducts(){
         return new ArrayList<>();
     }
     @GetMapping(value = "/get/{id}")
     public Products getProduct(@PathVariable Long id){
-        return new Products();
+        return fakeStoreProductService.getProduct(id);
     }
     @PostMapping(value = "/add")
     public Products addNewProduct(@RequestBody Products product){
