@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpMessageConverterExtractor;
 import org.springframework.web.client.RequestCallback;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class FakeStoreProductService {
+public class FakeStoreProductService implements FakeStoreService{
     private RestTemplate restTemplate;
     public FakeStoreProductService(RestTemplate restTemplate){
         this.restTemplate=restTemplate;
@@ -63,21 +64,34 @@ public class FakeStoreProductService {
 
         return answer;
     }
-    public Products addNewProduct(FakeStoreDto fakeStoreDto){
-        FakeStoreDto fakeStoreDto2 = restTemplate.postForObject("https://fakestoreapi.com/products",
-                0, FakeStoreDto.class);
-        Products products=new Products();
-        products.setId(fakeStoreDto2.getId());
-        products.setTitle(fakeStoreDto2.getTitle());
-        products.setPrice(fakeStoreDto2.getPrice());
-        Category category=new Category();
-        category.setId(1L);
-        category.setName(fakeStoreDto2.getCategory());
-        products.setDescription(fakeStoreDto2.getDescription());
-        products.setImage(fakeStoreDto2.getImage());
+    private FakeStoreDto convertProductToFakeStoreProductDTO(Products product) {
+        FakeStoreDto productDTO = new FakeStoreDto();
+        productDTO.setTitle(product.getTitle());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setCategory(product.getCategory().getName());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setImage(product.getImage());
+        return productDTO;
+    }
+    public Products addNewProduct(Products product){
+        FakeStoreDto productDTO = convertProductToFakeStoreProductDTO(product);
+        FakeStoreDto responseDTO = restTemplate.postForObject("https://fakestoreapi.com/products", productDTO, FakeStoreDto.class);
+        if (responseDTO != null)
+            return convertFakeStoreProductToProduct(responseDTO);
+        System.out.println("Product not created");
+        return null;
+    }
+    private Products convertFakeStoreProductToProduct(FakeStoreDto fakeStoreProduct) {
+        Products product = new Products();
+        product.setTitle(fakeStoreProduct.getTitle());
+        product.setId(fakeStoreProduct.getId());
+        product.setPrice(fakeStoreProduct.getPrice());
+        product.setDescription(fakeStoreProduct.getDescription());
+        product.setImage(fakeStoreProduct.getImage());
+        product.setCategory(new Category());
+        product.getCategory().setName(fakeStoreProduct.getCategory());
 
-        return products;
-
+        return product;
     }
     public Products replaceProduct(Long id, Products product) {
         FakeStoreDto fakeStoreProductDto = new FakeStoreDto();

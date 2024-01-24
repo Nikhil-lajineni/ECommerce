@@ -6,6 +6,7 @@ import com.example.springboot.Service.FakeStoreProductService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +32,8 @@ public class ProductController {
         return fakeStoreProductService.getAllProducts();
     }
     @PostMapping(value = "/add")
-    public ResponseEntity<Products> addNewProduct(@RequestBody FakeStoreDto fakeStoreDto){
-        return new ResponseEntity<>(fakeStoreProductService.addNewProduct(fakeStoreDto), HttpStatusCode.valueOf(HttpServletResponse.SC_OK));
+    public ResponseEntity<Products> addNewProduct(@RequestBody Products products){
+        return new ResponseEntity<>(fakeStoreProductService.addNewProduct(products), HttpStatus.OK);
     }
     @PatchMapping(value = "/{id}")
     public Products updateProduct(@PathVariable Long id,@RequestBody Products product){
