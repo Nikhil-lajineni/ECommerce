@@ -1,6 +1,7 @@
 package com.example.springboot.Service;
 
 import com.example.springboot.Dto.FakeStoreDto;
+import com.example.springboot.Dto.ProductNotExistsException;
 import com.example.springboot.Models.Category;
 import com.example.springboot.Models.Products;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,9 +26,13 @@ public class FakeStoreProductService implements FakeStoreService{
     public FakeStoreProductService(RestTemplate restTemplate){
         this.restTemplate=restTemplate;
     }
-    public Products getProduct(Long id){
-        FakeStoreDto productDto = restTemplate.getForObject("https://fakestoreapi.com/products/1",
+    public Products getProduct(Long id) throws ProductNotExistsException {
+
+        FakeStoreDto productDto = restTemplate.getForObject("https://fakestoreapi.com/products/"+id,
                 FakeStoreDto.class);
+        if(productDto==null){
+            throw new ProductNotExistsException("not found " +id+ " check id");
+        }
         return ConvertDtoToProduct(productDto);
     }
 
@@ -109,7 +114,7 @@ public class FakeStoreProductService implements FakeStoreService{
         BeanUtils.copyProperties(response,p);
         return p;
     }
-    public Products deleteProduct(Long id){
+    public Products deleteProduct(Long id) throws ProductNotExistsException {
         Products p=getProduct(id);
         restTemplate.delete("https://fakestoreapi.com/products/6",FakeStoreDto.class);
         return p;

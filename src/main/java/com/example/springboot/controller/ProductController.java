@@ -1,6 +1,7 @@
 package com.example.springboot.controller;
 
 import com.example.springboot.Dto.FakeStoreDto;
+import com.example.springboot.Dto.ProductNotExistsException;
 import com.example.springboot.Models.Products;
 import com.example.springboot.Service.FakeStoreProductService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,8 +25,9 @@ public class ProductController {
         this.fakeStoreProductService=fakeStoreProductService;
     }
     @GetMapping(value = "/get/{id}")
-    public Products getProduct(@PathVariable Long id){
-        return fakeStoreProductService.getProduct(id);
+    public Products getProduct(@PathVariable Long id) throws ProductNotExistsException {
+
+            return fakeStoreProductService.getProduct(id);
     }
     @GetMapping(value = "/products")
     public List<Products> getAllProducts(){
@@ -45,7 +47,7 @@ public class ProductController {
         return fakeStoreProductService.replaceProduct(id,products);
     }
     @DeleteMapping (value = "/delete/{id}")
-    public Products deleteProduct(@PathVariable Long id){
+    public Products deleteProduct(@PathVariable Long id) throws ProductNotExistsException {
         return fakeStoreProductService.deleteProduct(id);
     }
 }
