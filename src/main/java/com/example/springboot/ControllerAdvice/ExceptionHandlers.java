@@ -22,6 +22,7 @@ public class ExceptionHandlers {
     ){
         ExceptionDto dto=new ExceptionDto();
         dto.setMsg(productNotExistsException.getMessage());
+        dto.setDetail("check the product");
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 }
