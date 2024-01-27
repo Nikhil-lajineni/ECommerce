@@ -20,7 +20,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service(value = "fakeStoreService")
 public class FakeStoreProductService implements FakeStoreService{
     private RestTemplate restTemplate;
     public FakeStoreProductService(RestTemplate restTemplate){
