@@ -1,9 +1,13 @@
 package com.example.springboot.Models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 @Data
-public class Category {
-    private Long Id;
+@Entity
+public class Category extends BaseModel {
     private String name;
+
 }
