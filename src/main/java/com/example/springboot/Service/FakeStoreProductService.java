@@ -3,30 +3,24 @@ package com.example.springboot.Service;
 import com.example.springboot.Dto.FakeStoreDto;
 import com.example.springboot.Dto.ProductNotExistsException;
 import com.example.springboot.Models.Category;
-import com.example.springboot.Models.Products;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.example.springboot.Models.Product;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpMessageConverterExtractor;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.resource.HttpResource;
 
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service(value = "fakeStoreService")
-public class FakeStoreProductService implements FakeStoreService{
+public class FakeStoreProductService implements ProductService {
     private RestTemplate restTemplate;
     public FakeStoreProductService(RestTemplate restTemplate){
         this.restTemplate=restTemplate;
     }
-    public Products getProduct(Long id) throws ProductNotExistsException {
+    public Product getProduct(Long id) throws ProductNotExistsException {
 
         FakeStoreDto productDto = restTemplate.getForObject("https://fakestoreapi.com/products/"+id,
                 FakeStoreDto.class);
@@ -36,13 +30,13 @@ public class FakeStoreProductService implements FakeStoreService{
         return ConvertDtoToProduct(productDto);
     }
 
-    public Products ConvertDtoToProduct(FakeStoreDto productDto) {
-        Products product=new Products();
+    public Product ConvertDtoToProduct(FakeStoreDto productDto) {
+        Product product=new Product();
         ;
         BeanUtils.copyProperties(productDto,product);
         return product;
     }
-    public List<Products> getAllProducts() {
+    public List<Product> getAllProducts() {
 
 
 
@@ -58,18 +52,18 @@ public class FakeStoreProductService implements FakeStoreService{
         );
 
 
-        List<Products> answer = new ArrayList<>();
+        List<Product> answer = new ArrayList<>();
 
 
         for (FakeStoreDto dto: response) {
-            Products p=new Products();
+            Product p=new Product();
             BeanUtils.copyProperties(dto,p);
             answer.add(p);
         }
 
         return answer;
     }
-    private FakeStoreDto convertProductToFakeStoreProductDTO(Products product) {
+    private FakeStoreDto convertProductToFakeStoreProductDTO(Product product) {
         FakeStoreDto productDTO = new FakeStoreDto();
         productDTO.setTitle(product.getTitle());
         productDTO.setPrice(product.getPrice());
@@ -78,7 +72,7 @@ public class FakeStoreProductService implements FakeStoreService{
         productDTO.setImage(product.getImage());
         return productDTO;
     }
-    public Products addNewProduct(Products product){
+    public Product addNewProduct(Product product){
         FakeStoreDto productDTO = convertProductToFakeStoreProductDTO(product);
         FakeStoreDto responseDTO = restTemplate.postForObject("https://fakestoreapi.com/products", productDTO, FakeStoreDto.class);
         if (responseDTO != null)
@@ -86,8 +80,8 @@ public class FakeStoreProductService implements FakeStoreService{
         System.out.println("Product not created");
         return null;
     }
-    private Products convertFakeStoreProductToProduct(FakeStoreDto fakeStoreProduct) {
-        Products product = new Products();
+    private Product convertFakeStoreProductToProduct(FakeStoreDto fakeStoreProduct) {
+        Product product = new Product();
         product.setTitle(fakeStoreProduct.getTitle());
         product.setId(fakeStoreProduct.getId());
         product.setPrice(fakeStoreProduct.getPrice());
@@ -98,7 +92,7 @@ public class FakeStoreProductService implements FakeStoreService{
 
         return product;
     }
-    public Products replaceProduct(Long id, Products product) {
+    public Product replaceProduct(Long id, Product product) {
         FakeStoreDto fakeStoreProductDto = new FakeStoreDto();
         fakeStoreProductDto.setTitle(product.getTitle());
         fakeStoreProductDto.setPrice(product.getPrice());
@@ -110,12 +104,18 @@ public class FakeStoreProductService implements FakeStoreService{
                 new HttpMessageConverterExtractor<>(FakeStoreDto.class, restTemplate.getMessageConverters());
         FakeStoreDto response = restTemplate.execute("https://fakestoreapi.com/products/" + id,
                 HttpMethod.PUT, requestCallback, responseExtractor);
-        Products p=new Products();
+        Product p=new Product();
         BeanUtils.copyProperties(response,p);
         return p;
     }
-    public Products deleteProduct(Long id) throws ProductNotExistsException {
-        Products p=getProduct(id);
+
+    @Override
+    public Product updateProduct(Long id, Product product) {
+        return null;
+    }
+
+    public Product deleteProduct(Long id) throws ProductNotExistsException {
+        Product p=getProduct(id);
         restTemplate.delete("https://fakestoreapi.com/products/6",FakeStoreDto.class);
         return p;
 
