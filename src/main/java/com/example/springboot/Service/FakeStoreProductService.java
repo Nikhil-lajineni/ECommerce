@@ -4,6 +4,8 @@ import com.example.springboot.Dto.FakeStoreDto;
 import com.example.springboot.Dto.ProductNotExistsException;
 import com.example.springboot.Models.Category;
 import com.example.springboot.Models.Product;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -72,7 +74,7 @@ public class FakeStoreProductService implements ProductService {
         productDTO.setImage(product.getImage());
         return productDTO;
     }
-    public Product addNewProduct(Product product){
+    public Product addNewProduct(Product product) throws JsonProcessingException {
         FakeStoreDto productDTO = convertProductToFakeStoreProductDTO(product);
         FakeStoreDto responseDTO = restTemplate.postForObject("https://fakestoreapi.com/products", productDTO, FakeStoreDto.class);
         if (responseDTO != null)
