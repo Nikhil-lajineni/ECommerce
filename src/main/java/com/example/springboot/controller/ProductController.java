@@ -31,30 +31,32 @@ public class ProductController {
     public Product getProduct(@PathVariable Long id) throws ProductNotExistsException {
             return productService.getProduct(id);
     }
-    @GetMapping(value = "/products")
-    public ResponseEntity<List<Product>> getAllProducts(@RequestHeader("AuthorizationToken") String token) {
-        //
-        UserDto userDto = authenticationCommons.validateToken(token);
+    @GetMapping() // localhost:8080/products
+    public ResponseEntity<List<Product>> getAllProducts() {
+////        restTemplate.delete(null);
+//
+//        UserDto userDto = authenticationCommons.validateToken(token);
+//
+//        if (userDto == null) {
+//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//        }
+//
+//        boolean isAdmin = false;
+//
+//        for (Role role: userDto.getRoles()) {
+//            if (role.getName().equals("ADMIN")) {
+//                isAdmin = true;
+//                break;
+//            }
+//        }
+//
+//        if (!isAdmin) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
-        if (userDto == null) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-        boolean isAdmin = false;
-
-        for (Role role : userDto.getRoles()) {
-            if (role.getName().equals("ADMIN")) {
-                isAdmin = true;
-                break;
-            }
-        }
-
-        if (!isAdmin) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         List<Product> products = productService.getAllProducts(); // o p q
 
         List<Product> finalProducts = new ArrayList<>();
 
-        for (Product p : products) { // o  p q
+        for (Product p: products) { // o  p q
             p.setTitle("Hello" + p.getTitle());
             finalProducts.add(p);
         }
